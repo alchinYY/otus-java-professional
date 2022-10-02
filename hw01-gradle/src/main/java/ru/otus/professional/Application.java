@@ -10,9 +10,9 @@ import java.util.List;
 
 public class Application {
 
-    public static final String MAP_KEY1 = "key1";
-    private static final List<String> LIST_KEY1 = Arrays.asList("valKey3", "valKey2", "valKey1");
+    private static final String MAP_KEY1 = "key1";
     private static final String KEY1_ELEM4 = "valKey4";
+    private static final List<String> LIST_KEY1 = Arrays.asList("valKey3", "valKey2", "valKey1");
 
     public static void main(String... args) {
         ArrayListMultimap<String, String> mapOfLists = ArrayListMultimap.create();
