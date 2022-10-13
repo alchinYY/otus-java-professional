@@ -14,7 +14,7 @@ public class CustomerReverseOrder {
     }
 
     public void add(Customer customer) {
-        customers.add(customer);
+        customers.addLast(customer);
     }
 
     public Customer take() {

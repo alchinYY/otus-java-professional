@@ -1,8 +1,6 @@
 package ru.otus.professional;
 
-import java.util.Map;
-import java.util.Optional;
-import java.util.TreeMap;
+import java.util.*;
 
 public class CustomerService {
     //todo: 3. надо реализовать методы этого класса
@@ -11,7 +9,7 @@ public class CustomerService {
     private final TreeMap<Customer, String> customersMap;
 
     public CustomerService() {
-        customersMap = new TreeMap<>(new CustomerComparator());
+        customersMap = new TreeMap<>(Comparator.comparingLong(Customer::getScores));
     }
 
     public Map.Entry<Customer, String> getSmallest() {
@@ -19,9 +17,11 @@ public class CustomerService {
     }
 
     public Map.Entry<Customer, String> getNext(Customer customer) {
-        return Optional.ofNullable(customersMap.higherEntry(customer))
-                .map(CustomerEntry::new)
-                .orElse(null);
+        Map.Entry<Customer, String> entry = customersMap.higherEntry(customer);
+        if(Objects.nonNull(entry)) {
+            entry = new CustomerEntry(entry);
+        }
+        return entry;
     }
 
     public void add(Customer customer, String data) {
