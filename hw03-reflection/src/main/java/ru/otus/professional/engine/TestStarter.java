@@ -9,7 +9,8 @@ public class TestStarter {
 
     public <T> void start(Class<T> clazz) {
         log.info("Запуск тестирования класса {}\n", clazz.getSimpleName());
-        TestStat testStat = TestEngine.executeAllTests(clazz);
+        TestEngine<T> testEngine = new TestEngine(clazz);
+        TestStat testStat = testEngine.executeAllTests();
         printStatistic(testStat);
     }
 

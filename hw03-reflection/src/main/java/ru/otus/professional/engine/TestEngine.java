@@ -1,7 +1,7 @@
 package ru.otus.professional.engine;
 
 import com.google.common.base.Strings;
-import lombok.experimental.UtilityClass;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.otus.professional.engine.anotation.After;
 import ru.otus.professional.engine.anotation.Before;
@@ -15,28 +15,31 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@UtilityClass
 @Slf4j
-class TestEngine {
+@RequiredArgsConstructor
+class TestEngine<T> {
 
-    public <T> TestStat executeAllTests(Class<T> clazz) {
-        var allMethods = getListMethodsFromCLass(clazz);
+    private final Class<T> clazz;
+
+    public TestStat executeAllTests() {
+        var allMethods = getListMethodsFromCLass();
         var beforeMethods = getMethodsWithAnnotationFilter(allMethods, Before.class);
         var afterMethods = getMethodsWithAnnotationFilter(allMethods, After.class);
-        var testStat = TestStat.createNewInstance();
+        var testStat = new TestStat();
         for (var testMethod : getMethodsWithAnnotationFilter(allMethods, Test.class)) {
-            var instance = newInstance(clazz);
+            var instance = newInstance();
             var displayName = getDisplayName(testMethod);
             testStat.addTest();
             log.info("* Запуск теста::{}", displayName);
             runAllRequiredMethods(instance, beforeMethods);
+            checkIllegalAnnotation(testMethod);
             try {
                 runTestMethod(instance, testMethod);
             } catch (Exception e) {
-                e.printStackTrace(System.out);
-                log.warn("result::ko");
+                log.warn("result::ko.\n{}", stackTraceToString(e.getStackTrace()));
                 testStat.addFailedTest(displayName);
             } finally {
                 runAllRequiredMethods(instance, afterMethods);
@@ -45,17 +48,22 @@ class TestEngine {
         return testStat;
     }
 
-    private <T> List<Method> getListMethodsFromCLass(Class<T> clazz) {
+    private String stackTraceToString(StackTraceElement[] stackTraceElements) {
+        return Stream.of(stackTraceElements)
+                .map(StackTraceElement::toString)
+                .collect(Collectors.joining("\n"));
+    }
+
+    private List<Method> getListMethodsFromCLass() {
         return Stream.of(clazz.getMethods()).toList();
     }
 
-    private <T> void runTestMethod(T instance, Method testMethod) throws InvocationTargetException, IllegalAccessException {
-        checkIllegalAnnotation(testMethod);
+    private void runTestMethod(T instance, Method testMethod) throws InvocationTargetException, IllegalAccessException {
         testMethod.invoke(instance);
         log.info("резултат::ok");
     }
 
-    private <T> T newInstance(Class<T> clazz) {
+    private T newInstance() {
         try {
             log.debug("Class Name:{}", clazz.getSimpleName());
             Constructor<?>[] constructors = clazz.getConstructors();
@@ -67,7 +75,7 @@ class TestEngine {
         }
     }
 
-    private <T> void runAllRequiredMethods(T instance, List<Method> methods) {
+    private void runAllRequiredMethods(T instance, List<Method> methods) {
         try {
             for (Method method : methods) {
                 method.invoke(instance);
@@ -77,7 +85,7 @@ class TestEngine {
         }
     }
 
-    private <T extends Annotation> List<Method> getMethodsWithAnnotationFilter(List<Method> methods, Class<T> annotationClass) {
+    private <A extends Annotation> List<Method> getMethodsWithAnnotationFilter(List<Method> methods, Class<A> annotationClass) {
         return methods.stream()
                 .filter(m -> m.isAnnotationPresent(annotationClass))
                 .toList();
