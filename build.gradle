@@ -20,6 +20,9 @@ allprojects {
                 mavenBom "com.google.protobuf:protobuf-bom:3.21.1"
             }
             dependency "com.google.guava:guava:${Versions.guava}"
+            dependency "org.ow2.asm:asm-commons:${Versions.asm}"
+            dependency "cglib:cglib:${Versions.cglib}"
+            dependency "com.jcabi:jcabi-log:${Versions.jcabi}"
         }
     }
 
