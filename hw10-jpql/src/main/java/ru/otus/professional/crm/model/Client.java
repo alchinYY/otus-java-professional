@@ -1,7 +1,6 @@
 package ru.otus.professional.crm.model;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.CascadeType;
@@ -17,6 +16,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @NoArgsConstructor
 @Entity
@@ -67,7 +67,11 @@ public class Client implements Cloneable {
                 .map(p -> new Phone(p.getId(), p.getNumber(), this))
                 .toList();
 
-        var newAddress = new Address(address.getId(), address.getStreet());
+        Address newAddress = null;
+
+        if(Objects.nonNull(address)) {
+            newAddress = new Address(address.getId(), address.getStreet());
+        }
 
         return new Client(this.id, this.name, newAddress, newPhones);
     }
