@@ -33,7 +33,9 @@ public class DbServiceClientCacheImpl implements DBServiceClient {
         if(Objects.nonNull(clientFromCache)) {
             return Optional.of(clientFromCache);
         }
-        return dbServiceClient.getClient(id);
+        var clientFromDb = dbServiceClient.getClient(id);
+        clientFromDb.ifPresent(cl -> cache.put(cl.getId(), cl));
+        return clientFromDb;
     }
 
     @Override
