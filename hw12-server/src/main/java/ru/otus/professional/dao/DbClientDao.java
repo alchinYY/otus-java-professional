@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-public class ClientDbDao implements ClientDao {
+public class DbClientDao implements ClientDao {
 
     private final DBServiceClient dbServiceClient;
 

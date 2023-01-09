@@ -9,7 +9,7 @@ import ru.otus.professional.crm.model.Client;
 import ru.otus.professional.crm.service.DbServiceClientCacheImpl;
 import ru.otus.professional.crm.service.DbServiceClientImpl;
 import ru.otus.professional.dao.ClientDao;
-import ru.otus.professional.dao.ClientDbDao;
+import ru.otus.professional.dao.DbClientDao;
 import ru.otus.professional.dao.InMemoryUserDao;
 import ru.otus.professional.dao.UserDao;
 import ru.otus.professional.listeners.LogListener;
@@ -42,7 +42,7 @@ public class ServerApplication {
         var dbServiceClientCache = new DbServiceClientCacheImpl(dbServiceClient, cache);
 
         UserDao userDao = new InMemoryUserDao();
-        ClientDao clientDao = new ClientDbDao(dbServiceClientCache);
+        ClientDao clientDao = new DbClientDao(dbServiceClientCache);
         Gson gson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
         TemplateProcessor templateProcessor = new TemplateProcessorImpl(TEMPLATES_DIR);
         UserAuthService authService = new UserAuthServiceImpl(userDao);
