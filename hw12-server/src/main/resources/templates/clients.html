@@ -1,0 +1,97 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Клиенты</title>
+    <script>
+        async function getClientById() {
+            const clientIdTextBox = document.getElementById('clientIdTextBox');
+            const clientDataContainer = document.getElementById('clientDataContainer');
+            const id = clientIdTextBox.value;
+            await fetch('api/client/' + id, {
+                method: 'GET'
+            })
+                .then(response => response.json())
+                .then(client => clientDataContainer.innerHTML = JSON.stringify(client));
+        }
+
+        async function createClient() {
+            const clientNewNameBox = document.getElementById('clientNewNameBox');
+            const clientNewAddressBox = document.getElementById('clientNewAddressBox');
+            const clientPhoneBox = document.getElementById('clientPhoneBox');
+            const clientCreateDataContainer = document.getElementById('clientCreateDataContainer');
+
+            let clientData = {
+                name: clientNewNameBox.value,
+                address: clientNewAddressBox.value,
+                phonesString: clientPhoneBox.value
+            };
+
+            let response = await fetch('api/client', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8'
+                },
+                body: JSON.stringify(clientData)
+            }).then((response) => {
+                console.log(response)
+                if (!response.ok) {
+                    throw new Error('');
+                }
+            }).then((responseJson) => {
+                console.log(responseJson);
+                location.reload();
+            }).then(response => {
+                response.json();
+            }).catch((error) => {
+                clientCreateDataContainer.innerHTML = 'Ошибка создания пользователя, нарушен шаблон укзаания телефона:' + JSON.stringify(error);
+            });
+        }
+    </script>
+</head>
+
+<body>
+
+<h4>Получить клиента по id</h4>
+<input type="text" id = "clientIdTextBox" value="3" placeholder="Введите id клиента">
+<button onclick="getClientById()">Получить</button>
+<pre id = "clientDataContainer"></pre>
+
+<h4>Список клиентов</h4>
+<table style="width: 400px">
+    <thead>
+        <tr>
+            <td style="width: 50px">Id</td>
+            <td style="width: 150px">Имя</td>
+            <td style="width: 100px">Улица</td>
+            <td style="width: 100px">Телефоны</td>
+        </tr>
+    </thead>
+    <tbody>
+        <#list clientsTemplate as client>
+            <tr>
+                <td>${client.id}</td>
+                <td>${client.name}</td>
+                <#if client.address?has_content>
+                    <td>${client.address.street}</td>
+                <#else>
+                    <td>-</td>
+                </#if>
+                <td>
+                    <#list client.getPhones() as phone>
+                        ${phone.number}
+                    </#list>
+                </td>
+            </tr>
+        </#list>
+    </tbody>
+</table>
+
+<h4>Создать клиента</h4>
+<input type="text" id="clientNewNameBox" value="Vasya" placeholder="Введите имя клиента">
+<input type="text" id="clientNewAddressBox" value="Street" placeholder="Введите улицу клиента">
+<input type="text" id="clientPhoneBox" value="00-00-00-00;"
+       placeholder="Введите номер клиент, если несколько, то через точку с запятой">
+<button onclick="createClient()">Создать</button>
+<pre id="clientCreateDataContainer"></pre>
+
+</body>
+</html>
