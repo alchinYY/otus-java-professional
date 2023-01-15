@@ -15,6 +15,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public class AppComponentsContainerImpl implements AppComponentsContainer {
@@ -32,13 +34,13 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
         checkConfigClass(configClass);
         try {
             var configObject = createInstance(configClass);
-            var orderedConfigsList = findAllConfigurationMethodsWithOrder(configClass);
-            for (Method method : orderedConfigsList) {
-                var methodName = getMethodName(method);
-                log.info("configName:{}", methodName);
-                var appComponentClass = initConfiguration(method, configObject);
-                appComponents.add(appComponentClass);
-                appComponentsByName.put(methodName, appComponentClass);
+            var orderedConfigMethodsList = findAllConfigurationMethodsWithOrder(configClass);
+            for (Method method : orderedConfigMethodsList) {
+                var componentName = getComponentNameFromConfigMethod(method);
+                log.info("configName:{}", componentName);
+                var appComponentInstance = initConfiguration(method, configObject);
+                appComponents.add(appComponentInstance);
+                appComponentsByName.put(componentName, appComponentInstance);
             }
             log.info("all configClass: {}", appComponentsByName.keySet());
 
@@ -51,12 +53,17 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
     @SuppressWarnings("unchecked")
     public <C> C getAppComponent(Class<C> componentClass) {
         log.info("get component with name:{}", componentClass.getName());
-        for (Object appComponent : appComponents) {
-            if (componentClass.isAssignableFrom(appComponent.getClass())) {
-                return (C) appComponent;
-            }
+        var configComponentsList = appComponents.stream()
+                .filter(component -> componentClass.isAssignableFrom(component.getClass()))
+                .toList();
+
+        if(configComponentsList.isEmpty()) {
+            throw new DiException(String.format("Current been not found \"%s\"", componentClass.getName()));
         }
-        throw new DiException("Current been not found \"" + componentClass.getName() + "\"");
+        if(configComponentsList.size() > 1) {
+            throw new DiException(String.format("Current been is double \"%s\"", componentClass.getName()));
+        }
+        return (C) configComponentsList.get(0);
     }
 
     @Override
@@ -99,7 +106,7 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
         }
     }
 
-    private String getMethodName(Method method) {
+    private String getComponentNameFromConfigMethod(Method method) {
         var name = method.getAnnotation(AppComponent.class).name();
         if (appComponentsByName.containsKey(name)) {
             throw new DiException("current key is exists \"" + name + "\"");

@@ -81,10 +81,7 @@ class ApplicationTest {
     @Test
     void shouldThrowExceptionWhenContainerContainsMoreThanOneOrNoneExpectedComponents() throws Exception {
         var ctx = new AppComponentsContainerImpl(ConfigWithTwoSameComponents.class);
-        //TODO Ниже кусок кода не работает. Пример взять из репозитория, я заблокировал кусочек и написал рабочий вариант
-//        assertThatCode(()-> ctx.getAppComponent(EquationPreparer.class))
-//                .isInstanceOf(Exception.class);
-        assertThatCode(()-> ctx.getAppComponent("equationPreparer1000"))
+        assertThatCode(()-> ctx.getAppComponent(EquationPreparer.class))
                 .isInstanceOf(Exception.class);
 
         assertThatCode(()-> ctx.getAppComponent(PlayerService.class))
