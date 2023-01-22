@@ -29,7 +29,7 @@ public class ClientFormController {
     }
 
     @PostMapping("/client/create")
-    public String createFormForBook(@ModelAttribute ClientDto clientDto) {
+    public String createClient(@ModelAttribute ClientDto clientDto) {
         clientService.createClient(mapper.map(clientDto, Client.class));
         return "redirect:" + CLIENTS_DEFAULT_PAGE;
     }
