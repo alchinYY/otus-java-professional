@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>List of all clients</title>
+    <link rel="stylesheet" type="text/css" media="all" href="../static/css/styles.css" th:href="@{/css/styles.css}"/>
+</head>
+<body>
+
+<h3 th:text="clients">clients:</h3>
+
+<table class="client-table">
+    <thead>
+    <tr>
+        <th th:text="ID">ID</th>
+        <th th:text="Name">Name</th>
+        <th th:text="Address">Address</th>
+        <th th:text="Phones">Phones</th>
+        <th th:text="Delete">Delete</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="client : ${clients}">
+        <td th:text="${client.id}">1</td>
+        <td th:text="${client.name}">John Doe</td>
+        <td th:text="${client.address}">Amenu 1</td>
+        <td th:text="${client.phonesString}">00-00-00;00-00-02</td>
+
+        <td>
+            <form id="delete-form" action="clients.html" th:action="@{/client/delete(id=${client.id})}"
+                  th:method="post">
+                <button type="submit" class="remover">
+                    <img th:src="@{/images/delete.png}" src="../static/images/delete.png" alt=""/>
+                </button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<label th:text="Add" for="add-client-href">Add</label>
+<a id="add-client-href" href="create-client.html" th:href="@{/client/create}" class="btn-add-client"
+   th:class="btn-add-client" >
+    <img th:src="@{/images/add.png}" src="../static/images/add.png" alt=""/>
+</a>
+</body>
+</html>
