@@ -1,0 +1,87 @@
+body {
+    padding: 50px;
+}
+
+label {
+    display: inline-block;
+    width: 100px;
+}
+
+input:read-only {
+    background: lightgray;
+}
+
+.row {
+    margin-top: 10px;
+}
+
+.errors {
+    color: red;
+}
+
+.client-table {
+    width: 100%;
+    margin-bottom: 20px;
+    border: 1px solid #dddddd;
+    border-collapse: collapse;
+}
+.client-table th {
+    font-weight: bold;
+    padding: 5px;
+    background: #efefef;
+    border: 1px solid #dddddd;
+}
+.client-table td {
+    border: 1px solid #dddddd;
+    padding: 5px;
+    text-align: center;
+}
+
+.remover {
+    background: none;
+    border: none;
+    display: inline;
+    vertical-align: middle;
+    horiz-align: center;
+}
+
+.remover img {
+    vertical-align: middle;
+    horiz-align: center;
+    max-height: 35px;
+    max-width: 35px;
+    object-fit: cover;
+}
+
+.remover {
+    background: none;
+    border: none;
+    display: inline;
+    vertical-align: middle;
+    horiz-align: center;
+}
+
+.remover img {
+
+    vertical-align: middle;
+    horiz-align: center;
+    max-height: 35px;
+    max-width: 35px;
+    object-fit: cover;
+}
+
+.btn-add-client {
+
+    display: inline;
+    vertical-align: middle;
+    horiz-align: center;
+}
+
+.btn-add-client img {
+
+    vertical-align: middle;
+    horiz-align: center;
+    max-height: 35px;
+    max-width: 35px;
+    object-fit: cover;
+}

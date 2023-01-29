@@ -15,7 +15,7 @@ allprojects {
     dependencyManagement {
         dependencies {
             imports {
-                mavenBom "org.springframework.boot:spring-boot-dependencies:2.7.2"
+                mavenBom "org.springframework.boot:spring-boot-dependencies:3.0.1"
                 mavenBom "org.testcontainers:testcontainers-bom:1.17.3"
                 mavenBom "com.google.protobuf:protobuf-bom:3.21.1"
             }
@@ -23,6 +23,8 @@ allprojects {
             dependency "org.ow2.asm:asm-commons:${Versions.asm}"
             dependency "cglib:cglib:${Versions.cglib}"
             dependency "com.jcabi:jcabi-log:${Versions.jcabi}"
+            dependency "com.google.code.findbugs:jsr305:${Versions.jsr305}"
+            dependency "org.modelmapper:modelmapper:${Versions.modelmapper}"
         }
     }
 
