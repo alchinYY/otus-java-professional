@@ -6,9 +6,11 @@ import ru.otus.professional.api.SensorDataProcessor;
 import ru.otus.professional.api.model.SensorData;
 import ru.otus.professional.lib.SensorDataBufferedWriter;
 
+import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.stream.Collectors;
 
 // Этот класс нужно реализовать
 public class SensorDataProcessorBuffered implements SensorDataProcessor {
@@ -17,12 +19,12 @@ public class SensorDataProcessorBuffered implements SensorDataProcessor {
 
     private final int bufferSize;
     private final SensorDataBufferedWriter writer;
-    private final Set<SensorData> dataBuffer;
+    private final ArrayBlockingQueue<SensorData> dataBuffer;
 
     public SensorDataProcessorBuffered(int bufferSize, SensorDataBufferedWriter writer) {
         this.bufferSize = bufferSize;
         this.writer = writer;
-        this.dataBuffer = new ConcurrentSkipListSet<>(Comparator.comparing(SensorData::getMeasurementTime));
+        this.dataBuffer = new ArrayBlockingQueue<>(bufferSize);
     }
 
     @Override
@@ -37,11 +39,14 @@ public class SensorDataProcessorBuffered implements SensorDataProcessor {
 
     public void flush() {
         try {
-            synchronized (dataBuffer) {
-                if(!dataBuffer.isEmpty()) {
-                    writer.writeBufferedData(dataBuffer.stream().toList());
-                    dataBuffer.clear();
-                }
+            if (!dataBuffer.isEmpty()) {
+                var list = new ArrayList<SensorData>();
+                dataBuffer.drainTo(list);
+                writer.writeBufferedData(
+                        list.stream()
+                                .sorted(Comparator.comparing(SensorData::getMeasurementTime))
+                                .collect(Collectors.toList())
+                );
             }
         } catch (Exception e) {
             log.error("Ошибка в процессе записи буфера", e);
