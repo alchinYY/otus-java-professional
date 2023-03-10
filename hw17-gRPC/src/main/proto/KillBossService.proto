@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package ru.otus.professional.generated;
+
+option java_multiple_files = true;
+
+message NumbersRangeMessage {
+    int64 left = 1;
+    int64 right = 2;
+}
+
+message NumberMessage {
+    int64 value = 1;
+}
+
+message Empty {}
+
+service KillBossService {
+    rpc getStreamOfNumbers(NumbersRangeMessage) returns (stream NumberMessage);
+}
